@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "email": "user1@example.com",
+    "password": "hashed_password_123",
+    "ip": "192.168.1.10",
+    "referral_code": "ABC123",
+    "balance": 50,
+    "joined_at": "2025-08-07T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "email": "user2@example.com",
+    "password": "hashed_password_456",
+    "ip": "192.168.1.11",
+    "referral_code": "XYZ456",
+    "balance": 70,
+    "joined_at": "2025-08-07T10:05:00Z"
+  }
+]
