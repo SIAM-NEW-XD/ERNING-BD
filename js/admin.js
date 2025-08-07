@@ -55,21 +55,51 @@ document.getElementById("addTaskForm")?.addEventListener("submit", e => {
   loadWithdrawsTable();
 });
 
-// Load Users Table
+// Load Users Table (with IP count + Ban/Remove options)
 function loadUsersTable() {
   const tbody = document.querySelector("#usersTable tbody");
   tbody.innerHTML = "";
 
+  const ipMap = {};
   users.forEach(user => {
+    if (user.ip) {
+      ipMap[user.ip] = (ipMap[user.ip] || 0) + 1;
+    }
+  });
+
+  users.forEach((user, index) => {
+    const ipCount = ipMap[user.ip] || 1;
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${user.email}</td>
-      <td>${user.ip || "N/A"}</td>
+      <td>${user.email}${user.banned ? " 🚫" : ""}</td>
+      <td>${user.ip || "N/A"} (${ipCount})</td>
       <td>৳${(user.balance || 0).toFixed(2)}</td>
       <td>${user.refCode || "-"}</td>
+      <td>
+        <button onclick="banUser(${index})">🛑 Ban</button>
+        <button onclick="removeUser(${index})">🗑️ Remove</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+// Ban user
+window.banUser = function(index) {
+  users[index].banned = true;
+  saveUsers();
+  alert("User banned successfully!");
+  loadUsersTable();
+}
+
+// Remove user
+window.removeUser = function(index) {
+  if (confirm("Are you sure to delete this user?")) {
+    users.splice(index, 1);
+    saveUsers();
+    alert("User removed.");
+    loadUsersTable();
+  }
 }
 
 // Load Withdraw Requests Table
@@ -96,18 +126,31 @@ function loadWithdrawsTable() {
   });
 }
 
-// Approve Withdraw
+// Approve Withdraw + Cut Balance
 window.approveWithdraw = function(index) {
   if (!confirm("Are you sure to approve this withdraw request?")) return;
 
-  withdraws[index].status = "approved";
-  saveWithdraws();
+  const wd = withdraws[index];
+  let user = users.find(u => u.email === wd.email);
 
-  alert("Withdraw approved!");
+  if (user) {
+    if (user.balance >= wd.amount) {
+      user.balance -= wd.amount;
+      withdraws[index].status = "approved";
+      saveUsers();
+      saveWithdraws();
+      alert("Withdraw approved and balance deducted.");
+    } else {
+      alert("User does not have enough balance.");
+    }
+  } else {
+    alert("User not found.");
+  }
+
   loadWithdrawsTable();
 }
 
-// Reject Withdraw
+// Reject Withdraw + Refund balance
 window.rejectWithdraw = function(index) {
   if (!confirm("Are you sure to reject this withdraw request?")) return;
 
@@ -116,7 +159,6 @@ window.rejectWithdraw = function(index) {
 
   wd.status = "rejected";
 
-  // Refund user balance
   let user = users.find(u => u.email === wd.email);
   if (user) {
     user.balance += wd.amount;
@@ -133,7 +175,7 @@ function adminLogout() {
   window.location.href = "index.html";
 }
 
-// Initialize Admin Panel
+// Init
 function initAdmin() {
   loadUsersTable();
   loadWithdrawsTable();
