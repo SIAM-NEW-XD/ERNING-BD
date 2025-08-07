@@ -1,0 +1,39 @@
+.gift-page {
+  background: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px 20px;
+}
+.gift-page .container {
+  max-width: 400px;
+  margin: auto;
+  background: #222;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+.gift-page input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+.gift-page button {
+  padding: 12px 25px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.gift-page button:hover {
+  background-color: #218838;
+}
+#giftMsg {
+  margin-top: 15px;
+  font-size: 16px;
+}
