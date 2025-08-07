@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Subscribe to YouTube Channel",
+    "description": "Visit and subscribe to our official YouTube channel.",
+    "link": "https://www.youtube.com/channel/yourchannel",
+    "points": 10
+  },
+  {
+    "id": 2,
+    "title": "Like a Facebook Page",
+    "description": "Like our official Facebook page to earn points.",
+    "link": "https://www.facebook.com/yourpage",
+    "points": 5
+  },
+  {
+    "id": 3,
+    "title": "Follow on Instagram",
+    "description": "Follow our Instagram profile.",
+    "link": "https://www.instagram.com/yourprofile",
+    "points": 8
+  }
+]
