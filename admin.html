@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EarnWeb - Withdraw</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="withdraw-page">
+  <div class="navbar">
+    <h2>💸 Withdraw Funds</h2>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="withdraw-box">
+      <h3>Request Withdrawal</h3>
+      <form id="withdrawForm">
+        <label for="amount">Amount (৳):</label>
+        <input type="number" id="amount" min="500" placeholder="Minimum ৳500" required />
+
+        <label for="method">Withdraw Method:</label>
+        <select id="method" required>
+          <option value="" disabled selected>Select Method</option>
+          <option value="bkash">Bkash</option>
+          <option value="rocket">Rocket</option>
+          <option value="nagad">Nagad</option>
+          <option value="bank">Bank Transfer</option>
+        </select>
+
+        <label for="account">Account Number:</label>
+        <input type="text" id="account" placeholder="Your account number" required />
+
+        <button type="submit">Submit Withdraw Request</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

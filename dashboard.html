@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EarnWeb - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+  <div class="navbar">
+    <h2>🏠 EarnWeb Dashboard</h2>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="balance-card">
+      <h3>💰 Your Balance</h3>
+      <p id="userBalance">৳ 0</p>
+    </div>
+
+    <div class="task-section">
+      <h3>📋 Daily Tasks</h3>
+      <div id="taskList">
+        <!-- Tasks will be loaded from tasks.json -->
+      </div>
+      <button onclick="location.href='withdraw.html'">🤑 Withdraw</button>
+    </div>
+
+    <div class="referral-box">
+      <h3>📢 Referral</h3>
+      <p>🔗 Your Link: <span id="refLink"></span></p>
+      <p>🧑‍🤝‍🧑 Referred Users: <span id="refCount">0</span></p>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
