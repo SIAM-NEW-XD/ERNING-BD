@@ -1,72 +1,99 @@
-// Load tasks from tasks.json and display them
-async function loadTasks() {
-  const taskList = document.getElementById("taskList");
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-  const completedTasks = JSON.parse(localStorage.getItem("taskComplete_" + user.email) || "[]");
+// Simulated tasks (normally from tasks.json)
+const tasks = [
+  { id: 1, title: "Visit Website", reward: 10 },
+  { id: 2, title: "Watch Video", reward: 20 },
+  { id: 3, title: "Download App", reward: 30 }
+];
 
-  const response = await fetch("data/tasks.json");
-  const tasks = await response.json();
+// Register
+function registerUser() {
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+  if (!email || !password) return alert("Fill all fields!");
 
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  if (users.find(u => u.email === email)) return alert("User exists!");
+
+  users.push({ email, password, balance: 0 });
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Registered! Now login.");
+  window.location.href = "index.html";
+}
+
+// Login
+function loginUser() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  let user = users.find(u => u.email === email && u.password === password);
+  if (!user) return alert("Invalid credentials!");
+
+  localStorage.setItem("loggedInUser", email);
+  window.location.href = "dashboard.html";
+}
+
+// Dashboard
+function loadDashboard() {
+  const email = localStorage.getItem("loggedInUser");
+  if (!email) return window.location.href = "index.html";
+
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  let user = users.find(u => u.email === email);
+  if (!user) return;
+
+  document.getElementById("userEmail").innerText = email;
+  document.getElementById("userBalance").innerText = user.balance;
+
+  let completed = JSON.parse(localStorage.getItem("task_complete") || "{}");
+  let completedTasks = completed[email] || [];
+
+  let taskList = document.getElementById("taskList");
   taskList.innerHTML = "";
 
   tasks.forEach(task => {
-    const isCompleted = completedTasks.includes(task.id);
-    const taskCard = document.createElement("div");
-    taskCard.className = "task-card";
-    taskCard.innerHTML = `
-      <h4>${task.title}</h4>
-      <p>${task.description}</p>
-      ${task.link ? `<a href="${task.link}" target="_blank">🌐 Visit</a><br>` : ""}
-      <button ${isCompleted ? "disabled" : ""} onclick="completeTask(${task.id}, ${task.reward})">
-        ✅ ${isCompleted ? "Completed" : `Complete & Earn ৳${task.reward}`}
-      </button>
-    `;
-    taskList.appendChild(taskCard);
+    let li = document.createElement("li");
+    li.innerText = `${task.title} - ${task.reward}৳ `;
+
+    let btn = document.createElement("button");
+    if (completedTasks.includes(task.id)) {
+      btn.innerText = "Completed";
+      btn.disabled = true;
+    } else {
+      btn.innerText = "Do Task";
+      btn.onclick = () => completeTask(task.id);
+    }
+
+    li.appendChild(btn);
+    taskList.appendChild(li);
   });
 }
 
-// Task complete system
-function completeTask(taskId, reward) {
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-  let completed = JSON.parse(localStorage.getItem("taskComplete_" + user.email) || "[]");
-
-  if (completed.includes(taskId)) return alert("Already completed!");
-
-  completed.push(taskId);
-  localStorage.setItem("taskComplete_" + user.email, JSON.stringify(completed));
-
-  // Update user balance
+function completeTask(taskId) {
+  const email = localStorage.getItem("loggedInUser");
   let users = JSON.parse(localStorage.getItem("users") || "[]");
-  const index = users.findIndex(u => u.email === user.email);
-  if (index !== -1) {
-    users[index].balance += reward;
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(users[index]));
-    document.getElementById("userBalance").innerText = "৳ " + users[index].balance;
-  }
+  let userIndex = users.findIndex(u => u.email === email);
+  if (userIndex === -1) return;
 
-  loadTasks(); // Reload tasks to disable completed
-  alert("🎉 Task Completed! ৳" + reward + " added!");
+  const task = tasks.find(t => t.id === taskId);
+  users[userIndex].balance += task.reward;
+
+  localStorage.setItem("users", JSON.stringify(users));
+
+  let completed = JSON.parse(localStorage.getItem("task_complete") || "{}");
+  if (!completed[email]) completed[email] = [];
+  completed[email].push(taskId);
+  localStorage.setItem("task_complete", JSON.stringify(completed));
+
+  alert(`Task Complete! You earned ${task.reward}৳`);
+  loadDashboard();
 }
 
-// Load user info
-function loadUserData() {
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) return location.href = "index.html";
-
-  document.getElementById("userBalance").innerText = "৳ " + user.balance;
-  document.getElementById("refLink").innerText = window.location.origin + "/register.html?ref=" + user.refCode;
-  document.getElementById("refCount").innerText = user.referrals || 0;
-}
-
-// Logout
 function logout() {
   localStorage.removeItem("loggedInUser");
-  location.href = "index.html";
+  window.location.href = "index.html";
 }
 
-// Load everything when page loads
-window.onload = function () {
-  loadUserData();
-  loadTasks();
-};
+// Auto load dashboard if on dashboard.html
+if (window.location.pathname.includes("dashboard.html")) {
+  window.onload = loadDashboard;
+}
