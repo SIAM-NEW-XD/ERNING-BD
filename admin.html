@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,61 +9,75 @@
   <div class="navbar">
     <h2>🛠️ Admin Panel</h2>
     <button onclick="adminLogout()">🚪 Logout</button>
-  </div>
+  </div>  <div class="container admin-container"><!-- Add Task Section -->
+<section class="admin-section">
+  <h3>➕ Add New Task</h3>
+  <form id="addTaskForm">
+    <input type="text" id="taskTitle" placeholder="Task Title" required />
+    <input type="number" id="taskReward" placeholder="Reward (৳)" required min="1" />
+    <button type="submit">Add Task</button>
+  </form>
+</section>
 
-  <div class="container admin-container">
+<!-- Users List Section -->
+<section class="admin-section">
+  <h3>👥 Registered Users</h3>
+  <table id="usersTable" border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>IP (Accounts)</th>
+        <th>Balance (৳)</th>
+        <th>Referral Code</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Users will be loaded here -->
+    </tbody>
+  </table>
+</section>
 
-    <!-- Add Task Section -->
-    <section class="admin-section">
-      <h3>➕ Add New Task</h3>
-      <form id="addTaskForm">
-        <input type="text" id="taskTitle" placeholder="Task Title" required />
-        <input type="number" id="taskReward" placeholder="Reward (৳)" required min="1" />
-        <button type="submit">Add Task</button>
-      </form>
-    </section>
+<!-- Withdraw Requests Section -->
+<section class="admin-section">
+  <h3>💸 Withdraw Requests</h3>
+  <table id="withdrawTable" border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
+    <thead>
+      <tr>
+        <th>User Email</th>
+        <th>Amount (৳)</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Withdraw requests will load here -->
+    </tbody>
+  </table>
+</section>
 
-    <!-- Users List Section -->
-    <section class="admin-section">
-      <h3>👥 Registered Users</h3>
-      <table id="usersTable" border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>IP (Accounts)</th>
-            <th>Balance (৳)</th>
-            <th>Referral Code</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Users will be loaded here -->
-        </tbody>
-      </table>
-    </section>
+<!-- Add Balance Section -->
+<section class="admin-section">
+  <h3>💰 Add Balance to User</h3>
+  <form id="addBalanceForm">
+    <input type="email" id="balanceEmail" placeholder="User Email" required />
+    <input type="number" id="balanceAmount" placeholder="Amount (৳)" required min="1" />
+    <button type="submit">Add Balance</button>
+  </form>
+</section>
 
-    <!-- Withdraw Requests Section -->
-    <section class="admin-section">
-      <h3>💸 Withdraw Requests</h3>
-      <table id="withdrawTable" border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
-        <thead>
-          <tr>
-            <th>User Email</th>
-            <th>Amount (৳)</th>
-            <th>Method</th>
-            <th>Account</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Withdraw requests will load here -->
-        </tbody>
-      </table>
-    </section>
+<!-- Generate Gift Code Section -->
+<section class="admin-section">
+  <h3>🎁 Generate Gift Code</h3>
+  <form id="giftCodeForm">
+    <input type="text" id="giftCode" placeholder="Gift Code (e.g. SIAM100)" required />
+    <input type="number" id="giftAmount" placeholder="Amount (৳)" required min="1" />
+    <input type="number" id="giftLimit" placeholder="Claim Limit" required min="1" />
+    <button type="submit">Generate Code</button>
+  </form>
+</section>
 
-  </div>
-
-  <script src="js/admin.js"></script>
-</body>
+  </div>  <script src="js/admin.js"></script></body>
 </html>
