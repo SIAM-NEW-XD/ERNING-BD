@@ -5,37 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EarnWeb - Dashboard</title>
   <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/main.js"></script>
 </head>
 <body class="dashboard-page">
   <div class="navbar">
-    <h2>🏠 EarnWeb Dashboard</h2>
-    <button onclick="logout()">🚪 Logout</button>
+    <h2>EarnWeb Dashboard</h2>
+  </div>
+
+  <div class="notice-box">
+    <marquee behavior="scroll" direction="left">🔥 নতুন নতুন টাস্ক এড হয়েছে! রেফার করলে বোনাস পাবে। প্রতিদিন গিফট কোড CLAIM করতে ভুলে যেও না!</marquee>
   </div>
 
   <div class="container">
-    <div class="balance-card">
-      <h3>💰 Your Balance</h3>
-      <p id="userBalance">৳ 1110</p>
+    <div class="balance-box">
+      <h3>তোর ব্যালেন্সঃ <span id="userBalance">৳ 0</span></h3>
     </div>
 
-    <div class="task-section">
-      <h3>📋 Daily Tasks</h3>
-      <div id="taskList">
-        <!-- Tasks will be loaded from tasks.json -->
-      </div>
-      <button onclick="location.href='withdraw.html'">🤑 Withdraw</button>
-    </div>
-
-    <div class="referral-box">
-      <h3>📢 Referral</h3>
-      <p>🔗 Your Link: <span id="refLink"></span></p>
-      <p>🧑‍🤝‍🧑 Referred Users: <span id="refCount">0</span></p>
+    <div class="button-group">
+      <a href="tasks.html" class="btn">📋 টাস্ক</a>
+      <a href="referral.html" class="btn">👥 রেফারেল</a>
+      <a href="gift.html" class="btn">🎁 গিফট ক্লেইম</a>
+      <a href="withdraw.html" class="btn">💸 উইথড্র</a>
+      <a href="profile.html" class="btn">⚙️ প্রোফাইল</a>
+      <a href="index.html" class="btn logout">🚪 লগআউট</a>
     </div>
   </div>
 
-  <script src="js/main.js"></script>
-  
 </body>
 </html>
-
-
