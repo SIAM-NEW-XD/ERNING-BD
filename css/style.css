@@ -1,0 +1,142 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body Styling */
+body {
+  background: #f4f6f8;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  background: #1e293b;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h2 {
+  font-size: 22px;
+}
+
+.navbar button {
+  background-color: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.navbar button:hover {
+  background-color: #dc2626;
+}
+
+/* Container */
+.container {
+  padding: 30px 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+/* Form Boxes */
+.login-box,
+.register-box,
+.withdraw-box,
+.admin-section,
+.dashboard-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Elements */
+form input,
+form select,
+form button {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+form button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+form button:hover {
+  background: #1e40af;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+table th,
+table td {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  text-align: center;
+}
+
+table th {
+  background-color: #f3f4f6;
+}
+
+table td button {
+  padding: 5px 10px;
+  margin: 2px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+table td button:hover {
+  opacity: 0.85;
+}
+
+/* Button Colors */
+button.approve {
+  background: #10b981;
+  color: white;
+}
+
+button.reject {
+  background: #ef4444;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .navbar,
+  .container {
+    padding: 10px;
+  }
+
+  form input,
+  form select,
+  form button {
+    font-size: 14px;
+  }
+}
