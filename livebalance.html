@@ -2,36 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User Live Balance</title>
+  <title>User Balance</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f3f3f3;
-    }
-    .balance-card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 300px;
-      margin: auto;
-    }
-    .balance-amount {
-      font-size: 36px;
-      font-weight: bold;
-      color: green;
-    }
-  </style>
 </head>
 <body>
-  <div class="balance-card">
-    <h2>👤 আপনার বর্তমান ব্যালেন্স</h2>
-    <div id="liveBalance" class="balance-amount">৳0</div>
+  <div class="container">
+    <h2>Welcome, <span id="usernameDisplay"></span></h2>
+    <h3>Your Current Balance: <span id="balanceDisplay">0</span> ৳</h3>
   </div>
 
-  <script src="js/livebalance.js"></script>
+  <script src="js/balance.js"></script>
 </body>
 </html>
