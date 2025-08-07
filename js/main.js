@@ -146,7 +146,7 @@ document.getElementById("withdrawForm")?.addEventListener("submit", e => {
   const method = document.getElementById("method").value;
   const account = document.getElementById("account").value.trim();
 
-  if (isNaN(amount) || amount < 500) {
+  if (isNaN(amount) || amount < 0) {
     alert("Minimum withdraw amount is ৳500");
     return;
   }
@@ -181,4 +181,5 @@ document.getElementById("withdrawForm")?.addEventListener("submit", e => {
 
   alert("Withdraw request submitted. Admin will process it soon.");
   window.location.href = "dashboard.html";
+
 });
