@@ -1,77 +1,144 @@
-// Utils (localStorage wrapper) function saveToStorage(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+// Utils
+function saveToStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function getFromStorage(key) {
+  let data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+}
 
-function getFromStorage(key) { let data = localStorage.getItem(key); return data ? JSON.parse(data) : null; }
+// ====== REGISTER USER FUNCTION =======
+function registerUser(name, email, password, ip = "N/A", refCode = "") {
+  let users = getFromStorage("earnweb_users") || [];
 
-// Admin Data Keys const usersKey = "earnweb_users"; const withdrawsKey = "earnweb_withdraws"; const tasksKey = "earnweb_tasks";
-
-// Load all users, withdraws, tasks let users = getFromStorage(usersKey) || []; let withdraws = getFromStorage(withdrawsKey) || []; let tasks = getFromStorage(tasksKey) || [];
-
-// Save helpers function saveUsers() { saveToStorage(usersKey, users); } function saveWithdraws() { saveToStorage(withdrawsKey, withdraws); } function saveTasks() { saveToStorage(tasksKey, tasks); }
-
-// Add Task document.getElementById("addTaskForm")?.addEventListener("submit", e => { e.preventDefault(); const title = document.getElementById("taskTitle").value.trim(); const reward = parseFloat(document.getElementById("taskReward").value);
-
-if (!title || isNaN(reward) || reward <= 0) { alert("Please enter valid task title and reward."); return; }
-
-const newTask = { id: Date.now(), title, reward };
-
-tasks.push(newTask); saveTasks();
-
-alert("Task added successfully!"); document.getElementById("addTaskForm").reset(); loadUsersTable(); loadWithdrawsTable(); });
-
-// Load Users Table (with IP count + Ban/Remove options) function loadUsersTable() { const tbody = document.querySelector("#usersTable tbody"); tbody.innerHTML = "";
-
-const ipMap = {}; users.forEach(user => { if (user.ip) { ipMap[user.ip] = (ipMap[user.ip] || 0) + 1; } });
-
-users.forEach((user, index) => { const ipCount = ipMap[user.ip] || 1; const tr = document.createElement("tr"); tr.innerHTML = <td>${user.email}${user.banned ? " 🚫" : ""}</td> <td>${user.ip || "N/A"} (${ipCount})</td> <td>৳${(user.balance || 0).toFixed(2)}</td> <td>${user.refCode || "-"}</td> <td> <button onclick="banUser(${index})">🛑 Ban</button> <button onclick="removeUser(${index})">🗑️ Remove</button> </td>; tbody.appendChild(tr); }); }
-
-// Ban user window.banUser = function(index) { users[index].banned = true; saveUsers(); alert("User banned successfully!"); loadUsersTable(); }
-
-// Remove user window.removeUser = function(index) { if (confirm("Are you sure to delete this user?")) { users.splice(index, 1); saveUsers(); alert("User removed."); loadUsersTable(); } }
-
-// Load Withdraw Requests Table function loadWithdrawsTable() { const tbody = document.querySelector("#withdrawTable tbody"); tbody.innerHTML = "";
-
-withdraws.forEach((wd, idx) => { const tr = document.createElement("tr"); tr.innerHTML = <td>${wd.email}</td> <td>৳${wd.amount.toFixed(2)}</td> <td>${wd.method}</td> <td>${wd.account}</td> <td>${wd.status}</td> <td> ${wd.status === "pending" ? <button onclick="approveWithdraw(${idx})">Approve</button> <button onclick="rejectWithdraw(${idx})">Reject</button> : "-"} </td>; tbody.appendChild(tr); }); }
-
-// Approve Withdraw + Cut Balance window.approveWithdraw = function(index) { if (!confirm("Are you sure to approve this withdraw request?")) return;
-
-const wd = withdraws[index]; let user = users.find(u => u.email === wd.email);
-
-if (user) { if (user.balance >= wd.amount) { user.balance -= wd.amount; withdraws[index].status = "approved"; saveUsers(); saveWithdraws(); alert("Withdraw approved and balance deducted."); } else { alert("User does not have enough balance."); } } else { alert("User not found."); }
-
-loadWithdrawsTable(); }
-
-// Reject Withdraw + Refund balance window.rejectWithdraw = function(index) { if (!confirm("Are you sure to reject this withdraw request?")) return;
-
-const wd = withdraws[index]; if (wd.status !== "pending") return alert("Already processed.");
-
-wd.status = "rejected";
-
-let user = users.find(u => u.email === wd.email); if (user) { user.balance += wd.amount; saveUsers(); }
-
-saveWithdraws(); alert("Withdraw rejected and amount refunded."); loadWithdrawsTable(); }
-
-// 🎁 Gift Code জেনারেট ফাংশন function generateGiftCode(code, amount, limit) { const giftCodes = JSON.parse(localStorage.getItem("giftCodes")) || {}; giftCodes[code.toUpperCase()] = { amount: parseInt(amount), limit: parseInt(limit) }; localStorage.setItem("giftCodes", JSON.stringify(giftCodes)); alert(🎉 Gift code ${code.toUpperCase()} created for ৳${amount} (limit: ${limit})); }
-
-// Logout function adminLogout() { window.location.href = "index.html"; }
-
-// Init function initAdmin() { loadUsersTable(); loadWithdrawsTable(); }
-
-window.onload = initAdmin;
-
-document.addEventListener("DOMContentLoaded", function () {
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) {
-    window.location.href = "index.html";
-    return;
+  // Check if email exists
+  if(users.find(u => u.email === email)) {
+    alert("Email already registered!");
+    return false;
   }
 
-  document.getElementById("username").innerText = user.name || "User";
-  document.getElementById("balance").innerText = user.balance.toFixed(2) || "0";
-  document.getElementById("user-email").innerText = user.email || "N/A";
-  document.getElementById("created-at").innerText = user.createdAt || "--";
-});
+  const newUser = {
+    name: name.trim(),
+    email: email.trim(),
+    password: password,  // ভালো হলে hash করবে
+    ip: ip,
+    balance: 0,
+    refCode: refCode,
+    tasks: [],
+    banned: false,
+    createdAt: new Date().toLocaleString()
+  };
 
-function logout() {
-  localStorage.removeItem("loggedInUser");
+  users.push(newUser);
+  saveToStorage("earnweb_users", users);
+  alert("Registration successful!");
+  return true;
+}
+
+// ======= LOGGED IN USER =======
+let user = getFromStorage("loggedInUser");
+if (!user) {
+  alert("Please login first!");
   window.location.href = "index.html";
 }
+
+// ======= WITHDRAW REQUEST =======
+function sendWithdrawRequest(amount, method, account) {
+  if (amount <= 0 || !method || !account) {
+    alert("Please fill all withdraw details!");
+    return false;
+  }
+  
+  if (user.balance < amount) {
+    alert("Insufficient balance!");
+    return false;
+  }
+  
+  const withdrawRequest = {
+    email: user.email,
+    amount: amount,
+    method: method,
+    account: account,
+    status: "pending",
+    requestDate: new Date().toLocaleString()
+  };
+  
+  let withdraws = getFromStorage("earnweb_withdraws") || [];
+  withdraws.push(withdrawRequest);
+  saveToStorage("earnweb_withdraws", withdraws);
+  
+  alert("Withdraw request sent! Waiting for approval.");
+  return true;
+}
+
+// ======= GIFT CODE CLAIM =======
+function claimGiftCode(code) {
+  code = code.trim().toUpperCase();
+  if (!code) {
+    alert("Please enter a gift code!");
+    return false;
+  }
+  
+  let giftCodes = getFromStorage("giftCodes") || {};
+  
+  if (!giftCodes[code]) {
+    alert("Invalid gift code!");
+    return false;
+  }
+  
+  let gift = giftCodes[code];
+  if (gift.claimed >= gift.limit) {
+    alert("Gift code claim limit reached!");
+    return false;
+  }
+  
+  gift.claimed = (gift.claimed || 0) + 1;
+  giftCodes[code] = gift;
+  saveToStorage("giftCodes", giftCodes);
+  
+  // Add to user balance & sync with users DB
+  user.balance = (parseFloat(user.balance) || 0) + parseFloat(gift.amount);
+  saveToStorage("loggedInUser", user);
+  
+  let users = getFromStorage("earnweb_users") || [];
+  const idx = users.findIndex(u => u.email === user.email);
+  if (idx !== -1) {
+    users[idx].balance = user.balance;
+    saveToStorage("earnweb_users", users);
+  }
+  
+  alert(`Congrats! You got ৳${gift.amount} added to your balance.`);
+  return true;
+}
+
+// ======= FORMS EVENT LISTENERS =======
+document.getElementById("withdrawForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const amount = parseFloat(document.getElementById("withdrawAmount").value);
+  const method = document.getElementById("withdrawMethod").value.trim();
+  const account = document.getElementById("withdrawAccount").value.trim();
+  
+  if(sendWithdrawRequest(amount, method, account)) {
+    this.reset();
+    // update balance UI if needed
+    document.getElementById("userBalance").innerText = `৳${user.balance.toFixed(2)}`;
+  }
+});
+
+document.getElementById("giftCodeForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const code = document.getElementById("giftCodeInput").value;
+  
+  if(claimGiftCode(code)) {
+    this.reset();
+    document.getElementById("userBalance").innerText = `৳${user.balance.toFixed(2)}`;
+  }
+});
+
+// ======= UPDATE BALANCE ON PAGE LOAD =======
+document.addEventListener("DOMContentLoaded", () => {
+  const balanceEl = document.getElementById("userBalance");
+  if (balanceEl && user.balance !== undefined) {
+    balanceEl.innerText = `৳${parseFloat(user.balance).toFixed(2)}`;
+  }
+});
