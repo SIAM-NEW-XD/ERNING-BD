@@ -1,184 +1,59 @@
-// Utils (localStorage wrapper)
-function saveToStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function getFromStorage(key) {
-  let data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : null;
-}
-
-// Admin Data Keys
-const usersKey = "earnweb_users";
-const withdrawsKey = "earnweb_withdraws";
-const tasksKey = "earnweb_tasks";
-
-// Load all users, withdraws, tasks
-let users = getFromStorage(usersKey) || [];
-let withdraws = getFromStorage(withdrawsKey) || [];
-let tasks = getFromStorage(tasksKey) || [];
-
-// Save helpers
-function saveUsers() {
-  saveToStorage(usersKey, users);
-}
-function saveWithdraws() {
-  saveToStorage(withdrawsKey, withdraws);
-}
-function saveTasks() {
-  saveToStorage(tasksKey, tasks);
-}
-
-// Add Task
-document.getElementById("addTaskForm")?.addEventListener("submit", e => {
+// ইউজারের ব্যালেন্স যোগ ফাংশন
+document.getElementById("balanceForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  const title = document.getElementById("taskTitle").value.trim();
-  const reward = parseFloat(document.getElementById("taskReward").value);
+  const email = document.getElementById("userEmail").value.trim();
+  const amount = parseInt(document.getElementById("amountToAdd").value);
 
-  if (!title || isNaN(reward) || reward <= 0) {
-    alert("Please enter valid task title and reward.");
+  if (!email || isNaN(amount)) {
+    alert("সঠিক Email এবং Amount দিন!");
     return;
   }
 
-  const newTask = {
-    id: Date.now(),
-    title,
-    reward
-  };
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  const index = users.findIndex((u) => u.email === email);
 
-  tasks.push(newTask);
-  saveTasks();
+  if (index === -1) {
+    alert("ইউজার খুঁজে পাওয়া যায়নি!");
+    return;
+  }
 
-  alert("Task added successfully!");
-  document.getElementById("addTaskForm").reset();
-  loadUsersTable();
-  loadWithdrawsTable();
+  users[index].balance = (users[index].balance || 0) + amount;
+  localStorage.setItem("users", JSON.stringify(users));
+  alert(`✅ ${email} একাউন্টে ${amount} টাকা যোগ হয়েছে`);
+  this.reset();
 });
 
-// Load Users Table (with IP count + Ban/Remove options)
-function loadUsersTable() {
-  const tbody = document.querySelector("#usersTable tbody");
-  tbody.innerHTML = "";
+// 🎁 Gift Code জেনারেট ফাংশন
+document.getElementById("giftCodeForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-  const ipMap = {};
-  users.forEach(user => {
-    if (user.ip) {
-      ipMap[user.ip] = (ipMap[user.ip] || 0) + 1;
-    }
-  });
+  const code = document.getElementById("giftCode").value.trim();
+  const amount = parseInt(document.getElementById("giftAmount").value);
+  const limit = parseInt(document.getElementById("claimLimit").value);
 
-  users.forEach((user, index) => {
-    const ipCount = ipMap[user.ip] || 1;
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${user.email}${user.banned ? " 🚫" : ""}</td>
-      <td>${user.ip || "N/A"} (${ipCount})</td>
-      <td>৳${(user.balance || 0).toFixed(2)}</td>
-      <td>${user.refCode || "-"}</td>
-      <td>
-        <button onclick="banUser(${index})">🛑 Ban</button>
-        <button onclick="removeUser(${index})">🗑️ Remove</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// Ban user
-window.banUser = function(index) {
-  users[index].banned = true;
-  saveUsers();
-  alert("User banned successfully!");
-  loadUsersTable();
-}
-
-// Remove user
-window.removeUser = function(index) {
-  if (confirm("Are you sure to delete this user?")) {
-    users.splice(index, 1);
-    saveUsers();
-    alert("User removed.");
-    loadUsersTable();
-  }
-}
-
-// Load Withdraw Requests Table
-function loadWithdrawsTable() {
-  const tbody = document.querySelector("#withdrawTable tbody");
-  tbody.innerHTML = "";
-
-  withdraws.forEach((wd, idx) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${wd.email}</td>
-      <td>৳${wd.amount.toFixed(2)}</td>
-      <td>${wd.method}</td>
-      <td>${wd.account}</td>
-      <td>${wd.status}</td>
-      <td>
-        ${wd.status === "pending" ? 
-          `<button onclick="approveWithdraw(${idx})">Approve</button>
-           <button onclick="rejectWithdraw(${idx})">Reject</button>` 
-          : "-"}
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// Approve Withdraw + Cut Balance
-window.approveWithdraw = function(index) {
-  if (!confirm("Are you sure to approve this withdraw request?")) return;
-
-  const wd = withdraws[index];
-  let user = users.find(u => u.email === wd.email);
-
-  if (user) {
-    if (user.balance >= wd.amount) {
-      user.balance -= wd.amount;
-      withdraws[index].status = "approved";
-      saveUsers();
-      saveWithdraws();
-      alert("Withdraw approved and balance deducted.");
-    } else {
-      alert("User does not have enough balance.");
-    }
-  } else {
-    alert("User not found.");
+  if (!code || isNaN(amount) || isNaN(limit)) {
+    alert("সব ফিল্ড পূরণ করুন!");
+    return;
   }
 
-  loadWithdrawsTable();
-}
+  let giftCodes = JSON.parse(localStorage.getItem("giftCodes")) || [];
+  const exists = giftCodes.find((g) => g.code === code);
 
-// Reject Withdraw + Refund balance
-window.rejectWithdraw = function(index) {
-  if (!confirm("Are you sure to reject this withdraw request?")) return;
-
-  const wd = withdraws[index];
-  if (wd.status !== "pending") return alert("Already processed.");
-
-  wd.status = "rejected";
-
-  let user = users.find(u => u.email === wd.email);
-  if (user) {
-    user.balance += wd.amount;
-    saveUsers();
+  if (exists) {
+    alert("এই কোডটি আগে থেকেই আছে!");
+    return;
   }
 
-  saveWithdraws();
-  alert("Withdraw rejected and amount refunded.");
-  loadWithdrawsTable();
-}
+  giftCodes.push({ code, amount, limit, claimed: 0 });
+  localStorage.setItem("giftCodes", JSON.stringify(giftCodes));
+  alert("✅ গিফট কোড তৈরি হয়েছে!");
+  this.reset();
+});
 
-// Logout
-function adminLogout() {
-  window.location.href = "index.html";
+// ⏳ অটো ডিলিট: যেসব গিফট কোডে limit শেষ
+function cleanExpiredGiftCodes() {
+  let giftCodes = JSON.parse(localStorage.getItem("giftCodes")) || [];
+  giftCodes = giftCodes.filter((g) => g.claimed < g.limit);
+  localStorage.setItem("giftCodes", JSON.stringify(giftCodes));
 }
-
-// Init
-function initAdmin() {
-  loadUsersTable();
-  loadWithdrawsTable();
-}
-
-window.onload = initAdmin;
+cleanExpiredGiftCodes();
