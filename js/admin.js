@@ -58,3 +58,20 @@ saveWithdraws(); alert("Withdraw rejected and amount refunded."); loadWithdrawsT
 
 window.onload = initAdmin;
 
+document.addEventListener("DOMContentLoaded", function () {
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("username").innerText = user.name || "User";
+  document.getElementById("balance").innerText = user.balance.toFixed(2) || "0";
+  document.getElementById("user-email").innerText = user.email || "N/A";
+  document.getElementById("created-at").innerText = user.createdAt || "--";
+});
+
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "index.html";
+}
