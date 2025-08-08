@@ -1,23 +1,12 @@
-// Check login status
-const currentUser = localStorage.getItem('currentUser');
-if (!currentUser) {
-  alert("Please login first.");
-  window.location.href = "index.html";
+// যেই ইউজারের ডেটা দেখাতে চাস, তার email/userID আগে থেকেই ধর
+const defaultUser = "user@gmail.com"; // ইচ্ছামত পরিবর্তন কর
+
+// ডেটা লোড করে দেখাও
+const userData = JSON.parse(localStorage.getItem(defaultUser));
+if (userData) {
+  document.getElementById("usernameDisplay").textContent = defaultUser;
+  document.getElementById("balanceDisplay").textContent = userData.balance || 0;
 } else {
-  // Show username
-  document.getElementById("usernameDisplay").textContent = currentUser;
-
-  // Show balance immediately
-  showBalance();
-
-  // Check balance button click
-  document.getElementById("checkBalanceBtn").addEventListener("click", showBalance);
-}
-
-// Function to get and show balance
-function showBalance() {
-  const currentUser = localStorage.getItem('currentUser');
-  const userData = JSON.parse(localStorage.getItem(currentUser));
-  const balance = userData.balance || 0;
-  document.getElementById("balanceDisplay").textContent = balance;
+  document.getElementById("usernameDisplay").textContent = "No user found";
+  document.getElementById("balanceDisplay").textContent = "0";
 }
