@@ -1,11 +1,23 @@
-// Check if user is logged in
+// Check login status
 const currentUser = localStorage.getItem('currentUser');
-
 if (!currentUser) {
   alert("Please login first.");
-  window.location.href = "index.html"; // redirect to login page
+  window.location.href = "index.html";
 } else {
-  const userData = JSON.parse(localStorage.getItem(currentUser));
+  // Show username
   document.getElementById("usernameDisplay").textContent = currentUser;
-  document.getElementById("balanceDisplay").textContent = userData.balance || 0;
+
+  // Show balance immediately
+  showBalance();
+
+  // Check balance button click
+  document.getElementById("checkBalanceBtn").addEventListener("click", showBalance);
+}
+
+// Function to get and show balance
+function showBalance() {
+  const currentUser = localStorage.getItem('currentUser');
+  const userData = JSON.parse(localStorage.getItem(currentUser));
+  const balance = userData.balance || 0;
+  document.getElementById("balanceDisplay").textContent = balance;
 }
