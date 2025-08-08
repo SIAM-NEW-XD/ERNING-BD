@@ -1,27 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EarnWeb - Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script defer src="js/main.js"></script>
+  <title>EarnWeb - ড্যাশবোর্ড</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      color: #1f2937;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: #1e293b;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    /* Scrolling notice with marquee */
+    .notice-box {
+      background: #ef4444;
+      color: white;
+      font-weight: 600;
+      padding: 12px 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .balance-box {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .balance-box h3 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 18px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 12px;
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+
+    .logout {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+    }
+
+    .logout:hover {
+      background: linear-gradient(to right, #dc2626, #b91c1c);
+    }
+
+    @media (max-width: 600px) {
+      .balance-box h3 {
+        font-size: 18px;
+      }
+
+      .btn {
+        font-size: 14px;
+        padding: 14px 10px;
+      }
+
+      .navbar {
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
-<body class="dashboard-page">
-  <div class="navbar">
-    <h2>EarnWeb Dashboard</h2>
-  </div>
+<body>
+
+  <div class="navbar">EarnWeb ড্যাশবোর্ড</div>
 
   <div class="notice-box">
-    <marquee behavior="scroll" direction="left">🔥 নতুন নতুন টাস্ক এড হয়েছে! রেফার করলে বোনাস পাবে। প্রতিদিন গিফট কোড CLAIM করতে ভুলে যেও না!</marquee>
+    <marquee behavior="scroll" direction="left" scrollamount="6" style="padding-left:10px;">
+      🔥 নতুন টাস্ক এসেছে! রেফার করলে বোনাস পাবে। প্রতিদিন গিফট কোড CLAIM করতে ভুলে যেও না!
+    </marquee>
   </div>
 
-  <div class="container">
-    <div class="balance-box">
-      <h3>তোর ব্যালেন্সঃ <span id="userBalance">৳ 0</span></h3>
-    </div>
-
+ 
     <div class="button-group">
+      <a href="livebalance.html" class="btn">📊 ব্যালেন্স চেক</a>
       <a href="tasks.html" class="btn">📋 টাস্ক</a>
       <a href="referral.html" class="btn">👥 রেফারেল</a>
       <a href="gift.html" class="btn">🎁 গিফট ক্লেইম</a>
@@ -33,5 +131,3 @@
 
 </body>
 </html>
-
-
